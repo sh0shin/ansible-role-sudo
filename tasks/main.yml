@@ -1,0 +1,146 @@
+---
+
+# forced os variables
+- name: forced os variables
+  include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - '{{ ansible_distribution }}-{{ ansible_machine | default("none") }}.yml'
+        - '{{ ansible_distribution }}-{{ ansible_distribution_release | default(0) }}.yml'
+        - '{{ ansible_distribution }}-{{ ansible_distribution_version | default(0) }}.yml'
+        - '{{ ansible_distribution }}-{{ ansible_distribution_major_version | default(0) }}.yml'
+        - '{{ ansible_distribution }}.yml'
+        - '{{ ansible_os_family }}.yml'
+        - 'main.yml'
+      paths:
+        - 'vars'
+  when: sudo_enabled
+        and ansible_os_family | string in sudo_os_family_supported
+  tags: [ sudo ]
+
+# packages
+- name: packages (freebsd)
+  pkgng:
+    name: '{{ sudo_packages_freebsd | default([]) }}'
+    state: '{{ sudo_packages_freebsd_state | default("latest") }}'
+    cached: '{{ sudo_packages_freebsd_cached | default(false) }}'
+  when: sudo_enabled
+        and ansible_os_family | string in sudo_os_family_supported
+        and ansible_os_family == 'FreeBSD'
+  tags: [ sudo ]
+
+- name: packages (redhat)
+  yum:
+    name: '{{ sudo_packages_redhat | default([]) }}'
+    state: '{{ sudo_packages_redhat_state | default("latest") }}'
+    update_cache: '{{ sudo_packages_redhat_update_cache | default(true) }}'
+  when: sudo_enabled
+        and ansible_os_family | string in sudo_os_family_supported
+        and ansible_os_family == 'RedHat'
+  tags: [ sudo ]
+
+# sudoers
+- name: sudoers (template)
+  template:
+    dest: '{{ sudo_sudoers }}'
+    src: "{{ lookup('first_found', params) }}"
+    #
+    mode: '{{ sudo_sudoers_mode | default(sudo_file_mode) }}'
+    owner: '{{ sudo_sudoers_owner | default(sudo_owner) }}'
+    group: '{{ sudo_sudoers_group | default(sudo_group) }}'
+    backup: '{{ sudo_sudoers_backup | default(sudo_backup) }}'
+    validate: '{{ sudo_sudoers_validate | default(omit) }}'
+  vars:
+    tpl_default: "sudoers"
+    tpl_presence: '{{ sudo_sudoers_template | default(tpl_default) }}'
+    params:
+      files:
+        - '{{ tpl_presence }}.{{ inventory_hostname }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}-{{ ansible_distribution_version | default(0) }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}-{{ ansible_distribution_major_version | default(0) }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_os_family }}.j2'
+        - '{{ tpl_presence }}.j2'
+        - '{{ tpl_presence }}.j2.in' # role default
+      paths:
+        - 'templates'
+  when: sudo_enabled
+        and ansible_os_family | string in sudo_os_family_supported
+  tags: [ sudo ]
+
+- name: sudoers.d (directory)
+  file:
+    dest: '{{ sudo_sudoers_directory }}'
+    state: directory
+    mode: '{{ sudo_sudoers_directory_mode | default(sudo_dir_mode) }}'
+    owner: '{{ sudo_sudoers_directory_owner | default(sudo_owner) }}'
+    group: '{{ sudo_sudoers_directory_group | default(sudo_group) }}'
+  when: sudo_enabled
+        and ansible_os_family | string in sudo_os_family_supported
+  tags: [ sudo ]
+
+- name: sudoers.d files (copy)
+  copy:
+    dest: '{{ sudo_sudoers_directory }}'
+    src: "{{ lookup('first_found', params) }}"
+    #
+    mode: '{{ sudo_sudoers_file_mode | default(sudo_file_mode) }}'
+    owner: '{{ sudo_sudoers_file_owner | default(sudo_owner) }}'
+    group: '{{ sudo_sudoers_file_group | default(sudo_group) }}'
+    backup: '{{ sudo_sudoers_file_backup | default(sudo_backup) }}'
+    validate: '{{ sudo_sudoers_file_validate | default(omit) }}'
+  vars:
+    params:
+      files: '{{ item }}'
+      paths:
+        - 'files/sudoers.d'
+        - 'files/sudoers.d.in' # role default
+  loop: '{{ sudo_sudoers_files }}'
+  when: sudo_enabled
+        and ansible_os_family | string in sudo_os_family_supported
+  tags: [ sudo ]
+
+- name: sudoers.d files local (copy)
+  copy:
+    dest: '{{ sudo_sudoers_directory }}'
+    src: "{{ lookup('first_found', params) }}"
+    #
+    mode: '{{ sudo_sudoers_file_mode | default(sudo_file_mode) }}'
+    owner: '{{ sudo_sudoers_file_owner | default(sudo_owner) }}'
+    group: '{{ sudo_sudoers_file_group | default(sudo_group) }}'
+    backup: '{{ sudo_sudoers_file_backup | default(sudo_backup) }}'
+    validate: '{{ sudo_sudoers_file_validate | default(omit) }}'
+  vars:
+    params:
+      files: '{{ item }}'
+      paths:
+        - 'files/sudoers.d'
+        - 'files/sudoers.d.in' # role default
+  loop: '{{ sudo_sudoers_files_local }}'
+  when: sudo_enabled
+        and ansible_os_family | string in sudo_os_family_supported
+  tags: [ sudo ]
+
+- name: sudoers.d files (find)
+  find:
+    paths: '{{ sudo_sudoers_directory }}'
+  register: sudoers
+  when: sudo_enabled
+        and ansible_os_family | string in sudo_os_family_supported
+  tags: [ sudo ]
+
+- name: sudoers.d cleanup
+  file:
+    path: '{{ item.path }}'
+    state: absent
+  with_items: '{{ sudoers.files }}'
+  when: sudo_enabled
+        and ansible_os_family | string in sudo_os_family_supported
+        and item.path | basename != 'README'
+        and item.path | basename not in sudo_sudoers_files
+        and item.path | basename not in sudo_sudoers_files_local
+  tags: [ sudo ]
+
+# vim: set syn=yaml sw=2 ts=2 et colorcolumn=160 :
+# eof

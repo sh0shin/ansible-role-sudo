@@ -1,0 +1,9 @@
+---
+
+sudo_group: "wheel"
+
+sudo_sudoers: "/usr/local/etc/sudoers"
+sudo_sudoers_directory: "/usr/local/etc/sudoers.d"
+
+# vim: set syn=yaml sw=2 ts=2 et colorcolumn=160 :
+# eof

@@ -1,0 +1,92 @@
+---
+
+# enabled
+sudo_enabled: yes
+
+# mode/owner/group/backup/umask defaults
+sudo_file_mode: "0440"
+sudo_dir_mode: "0750"
+sudo_owner: "root"
+sudo_group: "root"
+sudo_backup: true
+sudo_umask: "027"
+
+# packages
+sudo_packages_freebsd:
+  - security/sudo
+
+sudo_packages_redhat: # RedHat/CentOS
+  - sudo
+
+# sudoers
+sudo_sudoers: "/etc/sudoers"
+sudo_sudoers_directory: "/etc/sudoers.d"
+
+# host alias
+sudo_sudoers_host_alias: []
+#sudo_sudoers_host_alias:
+#  - name: "LOCAL"
+#    hosts:
+#      - "localhost"
+#      - "localhost4"
+#      - "localhost6"
+
+# user alias
+sudo_sudoers_user_alias: []
+#sudo_sudoers_user_alias:
+#  - name: "AUTOBOT"
+#    users:
+#      - "ansible"
+#      - "terraform"
+
+# cmnd alias
+sudo_sudoers_cmnd_alias: []
+#sudo_sudoers_cmnd_alias:
+#  - name: "ANSIBLE"
+#    cmnds:
+#      - "ansible-playbook"
+#      - "ansible-vault"
+#      - "ansible-inventory"
+
+# defaults
+sudo_sudoers_defaults:
+  "!visiblepw":
+  "always_set_home":
+  "match_group_by_gid":
+  "secure_path": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+  #TODO
+  #"mail_badpass":
+  #"always_query_group_plugin":
+  #"env_reset":
+  #"env_keep": []
+  #"log_output":
+
+# users
+sudo_sudoers_users:
+  - name: "root"
+    #allow: "ALL=(ALL)"
+    #nopasswd: false
+    #commands:
+    #  - "ALL"
+
+# groups
+sudo_sudoers_groups:
+  - name: "root"
+    #allow: "ALL=(ALL)"
+    #nopasswd: false
+    #commands:
+    #  - "ALL"
+  - name: "admin"
+  - name: "operator"
+  - name: "sudo"
+  - name: "wheel"
+
+# files
+sudo_sudoers_files:
+  - 00ansible
+
+sudo_sudoers_files_local: []
+
+# vim: set syn=yaml sw=2 ts=2 et colorcolumn=160 :
+# eof

@@ -1,0 +1,7 @@
+# Ansible defaults
+
+ansible   ALL=(ALL) NOPASSWD: ALL
+%ansible  ALL=(ALL) NOPASSWD: ALL
+
+# vim: set syn=sudoers sw=2 ts=2 et :
+# eof

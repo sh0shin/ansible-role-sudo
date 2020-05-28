@@ -1,0 +1,57 @@
+# {{ sudo_sudoers }}
+# {{ ansible_managed }}
+
+{# Host_Alias FOO = foo, bar                                #}
+{% if sudo_sudoers_host_alias                               %}
+# host alias
+{%  for host in sudo_sudoers_host_alias                     %}
+Host_Alias {{ host.name }} = {{ host.hosts | join(', ') }}
+{%  endfor                                                  %}
+
+{% endif                                                    %}
+{# User_Alias FOO = foo, bar                                #}
+{% if sudo_sudoers_user_alias                               %}
+# user alias
+{%  for user in sudo_sudoers_user_alias                     %}
+User_Alias {{ user.name }} = {{ user.users | join(', ') }}
+{%  endfor                                                  %}
+
+{% endif                                                    %}
+{# Cmnd_Alias FOO = /bin/foo, /bin/bar  #}
+{% if sudo_sudoers_cmnd_alias                               %}
+# cmnd alias
+{%  for cmnd in sudo_sudoers_cmnd_alias                     %}
+Cmnd_Alias {{ cmnd.name }} = {{ cmnd.cmnds | join(', ') }}
+{%  endfor                                                  %}
+
+{% endif                                                    %}
+# defaults
+{% for opt, val in sudo_sudoers_defaults.items()            %}
+{%  if not val                                              %}
+Defaults {{ opt }}
+{%  elif val is string or val is number                     %}
+Defaults {{ opt }} = {{ val }}
+{%  else                                                    %}
+Defaults {{ opt }} = "{{ val | join(' ') }}"
+{%  endif                                                   %}
+{% endfor                                                   %}
+
+# users
+{% for users in sudo_sudoers_users %}
+{%  for commands in users.commands | default(['ALL']) %}
+{{ users.name }} {{ users.allow | default('ALL=(ALL)') }} {{ "NOPASSWD: " if users.nopasswd | default(false) else "" }}{{ commands }}
+{%  endfor -%}
+{% endfor %}
+
+# groups
+{% for groups in sudo_sudoers_groups %}
+{%  for commands in groups.commands | default(['ALL']) %}
+%{{ groups.name }} {{ groups.allow | default('ALL=(ALL)') }} {{ "NOPASSWD: " if groups.nopasswd | default(false) else "" }}{{ commands }}
+{%  endfor -%}
+{% endfor %}
+
+# include
+#includedir {{ sudo_sudoers_directory }}
+
+# vim: set syn=sudoers sw=2 ts=2 et :
+# eof

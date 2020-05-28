@@ -1,0 +1,34 @@
+---
+
+galaxy_info:
+  role_name: sudo
+  author: Chris 'sh0shin' Frage
+  description: SUDO management
+  company: EDV-BV GmbH
+  #issue_tracker_url: http://example.com/issue/tracker
+  license: BSD-3-Clause
+
+  min_ansible_version: 2.8
+  #min_ansible_container_version:
+
+  # https://galaxy.ansible.com/api/v1/platforms/
+  platforms:
+    - name: EL
+      versions:
+        - 6
+        - 7
+
+    - name: FreeBSD
+      versions:
+        - 11.3
+        - 12.0
+        - 12.1
+
+  galaxy_tags:
+    - sudo
+    - sudoers
+
+dependencies: []
+
+# vim: set syn=yaml sw=2 ts=2 et colorcolumn=160 :
+# eof
