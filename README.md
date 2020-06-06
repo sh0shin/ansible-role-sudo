@@ -5,11 +5,10 @@ SUDO management
 `TODO`
 
 ## Role Variables
-`TODO`
+See `defaults/main.yml` for now.
 
 ## Dependencies
 `TODO`
-
 
 ## Example Playbook
 ```yaml
