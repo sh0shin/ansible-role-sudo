@@ -4,7 +4,7 @@ galaxy_info:
   role_name: sudo
   author: Chris 'sh0shin' Frage
   description: SUDO management
-  company: EDV-BV GmbH
+  #company:
   #issue_tracker_url: http://example.com/issue/tracker
   license: BSD-3-Clause
 
@@ -21,7 +21,6 @@ galaxy_info:
     - name: FreeBSD
       versions:
         - 11.3
-        - 12.0
         - 12.1
 
   galaxy_tags:
