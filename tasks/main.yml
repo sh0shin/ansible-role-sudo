@@ -14,6 +14,7 @@
         - '{{ ansible_os_family }}.yml'
         - 'main.yml'
       paths:
+        #- '{{ inventory_dir }}/vars'
         - 'vars'
   when: sudo_enabled
         and ansible_os_family | string in sudo_os_family_supported
@@ -64,6 +65,7 @@
         - '{{ tpl_presence }}.j2'
         - '{{ tpl_presence }}.j2.in' # role default
       paths:
+        - '{{ inventory_dir }}/templates'
         - 'templates'
   when: sudo_enabled
         and ansible_os_family | string in sudo_os_family_supported
@@ -94,6 +96,7 @@
     params:
       files: '{{ item }}'
       paths:
+        - '{{ inventory_dir }}/files/sudoers.d'
         - 'files/sudoers.d'
         - 'files/sudoers.d.in' # role default
   loop: '{{ sudo_sudoers_files }}'
@@ -115,6 +118,7 @@
     params:
       files: '{{ item }}'
       paths:
+        - '{{ inventory_dir }}/files/sudoers.d'
         - 'files/sudoers.d'
         - 'files/sudoers.d.in' # role default
   loop: '{{ sudo_sudoers_files_local }}'
