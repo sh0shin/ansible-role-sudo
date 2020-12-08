@@ -13,7 +13,7 @@ sudo_umask: "027"
 
 # packages
 sudo_packages_freebsd:
-  - security/sudo
+  - sudo
 
 sudo_packages_redhat: # RedHat/CentOS
   - sudo
