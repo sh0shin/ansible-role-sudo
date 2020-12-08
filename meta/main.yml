@@ -13,15 +13,21 @@ galaxy_info:
 
   # https://galaxy.ansible.com/api/v1/platforms/
   platforms:
+    - name: Debian
+      versions:
+        - all
+
     - name: EL
       versions:
-        - 6
-        - 7
+        - all
 
     - name: FreeBSD
       versions:
-        - 11.3
-        - 12.1
+        - all
+
+    - name: Ubuntu
+      versions:
+        - all
 
   galaxy_tags:
     - sudo

@@ -24,6 +24,16 @@
   tags: [ sudo ]
 
 # packages
+- name: packages (debian/ubuntu)
+  apt:
+    name: '{{ sudo_packages_debian | default([]) }}'
+    state: '{{ sudo_packages_debian_state | default("latest") }}'
+    update_cache: '{{ sudo_packages_debian_update_cache | default(true) }}'
+  when: sudo_enabled
+        and ansible_os_family | string in sudo_os_family_supported
+        and ansible_os_family == 'Debian'
+  tags: [ sudo ]
+
 - name: packages (freebsd)
   pkgng:
     name: '{{ sudo_packages_freebsd | default([]) }}'

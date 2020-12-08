@@ -12,6 +12,9 @@ sudo_backup: true
 sudo_umask: "027"
 
 # packages
+sudo_packages_debian:
+  - sudo
+
 sudo_packages_freebsd:
   - sudo
 
